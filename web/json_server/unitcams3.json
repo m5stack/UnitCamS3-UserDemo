@@ -1,0 +1,50 @@
+{
+  "get_mac": {
+    "msg": "ok",
+    "mac": "12:34:56:78:90:12"
+  },
+  "check_sdcard": {
+    "msg": "ok",
+    "info": "SD Card Not Valid"
+  },
+  "led_on": {
+    "msg": "ok"
+  },
+  "led_off": {
+    "msg": "ok"
+  },
+  "get_config": {
+    "wifiSsid": "qwerqwerqwer",
+    "wifiPass": "dfdfdf",
+    "startPoster": "no",
+    "waitApFirst": "no",
+    "nickname": "UnitCamS3",
+    "postInterval": 5
+  },
+  "set_config": {
+    "wifiSsid": "qwerqwerqwer",
+    "wifiPass": "dfdfdf",
+    "startPoster": "no",
+    "nickname": "UnitCamS3",
+    "postInterval": 5,
+    "apiId": "v1"
+  },
+  "reset_config": {
+    "msg": "ok"
+  },
+  "get_wifi_list": {
+    "wifiList": [
+      "tjrtjrtjrtjj",
+      "啊??",
+      "  小米共享WiFi_12341234",
+      "$%^%$^%$#^",
+      "0987098790-LLLdgfsdg",
+      "gggdgdgd",
+      "R  s s s ss  s",
+      "C**99986___dfidung???"
+    ]
+  },
+  "start_poster": {
+    "msg": "ok"
+  }
+}
