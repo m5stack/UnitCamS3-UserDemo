@@ -21,6 +21,7 @@ import {
 import { useState, useEffect } from "react";
 import { useDisclosure } from "@nextui-org/react";
 import { posterIntervalList } from "../assets/poster-interval-list";
+import { timeZoneList } from "../assets/time-zone-list";
 import { useNavigate } from "react-router-dom";
 
 type WifiScanState = "Scan WiFi" | "Scanning";
@@ -38,6 +39,7 @@ export default function CardPosterConfig() {
     wifiPass: "",
     nickname: "",
     postInterval: "30",
+    timeZone: "UTC+0",
   });
 
   const [widgetStates, setWidgetStates] = useState({
@@ -61,6 +63,7 @@ export default function CardPosterConfig() {
           wifiPass: data.wifiPass,
           nickname: data.nickname,
           postInterval: data.postInterval,
+          timeZone: data.timeZone,
         });
       })
       .catch((error) => {
@@ -124,6 +127,7 @@ export default function CardPosterConfig() {
       startPoster: "no",
       nickname: userConfig.nickname,
       postInterval: parseInt(userConfig.postInterval),
+      timeZone: userConfig.timeZone,
     });
     console.log("config json:");
     console.log(configJson);
@@ -298,6 +302,28 @@ export default function CardPosterConfig() {
 
       <Divider></Divider>
 
+      {/* timezone configs */}
+      <div className="mx-5 mt-5 mb-5 flex flex-col gap-x-5 gap-y-5">
+        <p className="grow mr-5 text-3xl font-serif font-bold">Time Zone</p>
+        <Select
+          label="Time zone"
+          className="max-w-xs"
+          color="primary"
+          defaultSelectedKeys={["UTC+0"]}
+          onChange={(e) => {
+            setUserConfig({ ...userConfig, timeZone: e.target.value });
+          }}
+        >
+          {timeZoneList.map((timeZone) => (
+            <SelectItem key={timeZone.value} value={timeZone.value}>
+              {timeZone.label}
+            </SelectItem>
+          ))}
+        </Select>
+      </div>
+
+      <Divider></Divider>
+
       {/* start button */}
       <div className="mx-5 mt-5 mb-5 flex flex-col gap-x-5 gap-y-5">
         <div className="flex gap-x-5 items-center">
@@ -340,6 +366,10 @@ export default function CardPosterConfig() {
                   <p>
                     <Code color="success">Post interval</Code>{" "}
                     {userConfig.postInterval + "s"}
+                  </p>
+                  <p>
+                    <Code color="primary">Time zone</Code>{" "}
+                    {userConfig.timeZone}
                   </p>
 
                   {widgetStates.saveConfigResultLabel != "" && (

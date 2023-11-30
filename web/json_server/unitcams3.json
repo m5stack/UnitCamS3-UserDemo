@@ -19,7 +19,8 @@
     "startPoster": "no",
     "waitApFirst": "no",
     "nickname": "UnitCamS3",
-    "postInterval": 5
+    "postInterval": 5,
+    "timeZone": "UTC+0"
   },
   "set_config": {
     "wifiSsid": "qwerqwerqwer",
@@ -27,6 +28,7 @@
     "startPoster": "no",
     "nickname": "UnitCamS3",
     "postInterval": 5,
+    "timeZone": "UTC+0",
     "apiId": "v1"
   },
   "reset_config": {
