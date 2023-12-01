@@ -35,7 +35,7 @@ export default function CardStartAndLink() {
     let newLink =
       "https://ezdata-dev-bucket.oss-cn-shenzhen.aliyuncs.com/" +
       newMac +
-      "/captured/captured.jpg";
+      "/captured.jpg";
     console.log("new link:", newLink);
 
     setImageLink(newLink);

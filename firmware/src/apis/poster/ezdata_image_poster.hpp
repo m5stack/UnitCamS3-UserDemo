@@ -1,9 +1,9 @@
 /**
- * @file ezdata_image_poster_mac_ver.hpp
+ * @file ezdata_image_poster.hpp
  * @author Forairaaaaa
  * @brief 
  * @version 0.1
- * @date 2023-11-21
+ * @date 2023-12-01
  * 
  * @copyright Copyright (c) 2023
  * 
@@ -15,21 +15,21 @@
 #include <esp_wifi.h>
 
 
-static String _http_part_1 = "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"dataType\"\r\n\r\nfile\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"watermarkText\"\r\n\r\n";
-static String _http_prt_2 = "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"name\"\r\n\r\ncaptured\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"permissions\"\r\n\r\n1\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"value\"\r\n\r\ncaptured.jpg\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"file\"; filename=\"captured.jpg\"\r\nContent-Type: image/jpeg\r\n\r\n";
-static String _http_tail = "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--\r\n";
+static String _http_part_1 = "------unitcams3poster\r\nContent-Disposition: form-data; name=\"dataType\"\r\n\r\nfile\r\n------unitcams3poster\r\nContent-Disposition: form-data; name=\"watermarkText\"\r\n\r\n";
+static String _http_part_2 = "\r\n------unitcams3poster\r\nContent-Disposition: form-data; name=\"timeZoneId\"\r\n\r\n";
+static String _http_part_3 = "\r\n------unitcams3poster\r\nContent-Disposition: form-data; name=\"name\"\r\n\r\ncaptured\r\n------unitcams3poster\r\nContent-Disposition: form-data; name=\"permissions\"\r\n\r\n1\r\n------unitcams3poster\r\nContent-Disposition: form-data; name=\"value\"\r\n\r\ncaptured.jpg\r\n------unitcams3poster\r\nContent-Disposition: form-data; name=\"file\"; filename=\"captured.jpg\"\r\nContent-Type: image/jpeg\r\n\r\n";
+static String _http_tail = "\r\n------unitcams3poster--\r\n";
 
 
 static WiFiClient client;
 
-static bool ezdata_image_poster_mac_ver(String serverName, int serverPort, String serverPath, String nickname) 
+static bool ezdata_image_poster(String serverName, int serverPort, String serverPath, String nickname, String timeZone) 
 {
     bool ret = false;
     String getAll;
     String getBody;
-    // WiFiClient client;
 
-
+    // Captrue 
     camera_fb_t* fb = NULL;
     fb = esp_camera_fb_get();
     if(!fb) 
@@ -40,72 +40,52 @@ static bool ezdata_image_poster_mac_ver(String serverName, int serverPort, Strin
         return false;
     }
     
+    // Connect server 
     // Serial.println("Connecting to server: " + serverName);
-
     if (client.connect(serverName.c_str(), serverPort)) 
     {
-        // Serial.println("Connection successful!\n");    
-        // String head = "--RandomNerdTutorials\r\nContent-Disposition: form-data; name=\"imageFile\"; filename=\"esp32-cam.jpg\"\r\nContent-Type: image/jpeg\r\n\r\n";
-        // String tail = "\r\n--RandomNerdTutorials--\r\n";
-
-
+        // HTTP message 
         String head = _http_part_1;
-        // head += mac;
         head += nickname;
-        head += _http_prt_2;
-
+        head += _http_part_2;
+        head += timeZone;
+        head += _http_part_3;
         String tail = _http_tail;
-
-
 
         uint16_t imageLen = fb->len;
         uint16_t extraLen = head.length() + tail.length();
         uint16_t totalLen = imageLen + extraLen;
-
-
         // Serial.printf("img len: %d\nextra len: %d\ntotal len: %d\n", imageLen, extraLen, totalLen);
 
-        
-    
+        // Start sending 
         client.println("POST " + serverPath + " HTTP/1.1");
         client.println("Host: " + serverName);
         client.println("Content-Length: " + String(totalLen));
-
         // Serial.println("POST " + serverPath + " HTTP/1.1");
         // Serial.println("Host: " + serverName);
         // Serial.println("Content-Length: " + String(totalLen));
 
-
-        // client.println("Content-Type: multipart/form-data; boundary=RandomNerdTutorials");
-        // client.println();
-        // client.print(head);
-
-        
-
-        client.println("Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+        client.println("Content-Type: multipart/form-data; boundary=----unitcams3poster");
         client.println();
         client.print(head);
-
-        // Serial.println("Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+        // Serial.println("Content-Type: multipart/form-data; boundary=----unitcams3poster");
         // Serial.println();
         // Serial.print(head);
 
-
-
-    
+        // Image data 
         uint8_t* fbBuf = fb->buf;
         size_t fbLen = fb->len;
-        for (size_t n=0; n<fbLen; n=n+1024) 
+        for (size_t n = 0; n < fbLen; n = n + 1024) 
         {
-            if (n+1024 < fbLen) 
+            if (n + 1024 < fbLen) 
             {
                 client.write(fbBuf, 1024);
                 // Serial.write(fbBuf, 1024);
                 fbBuf += 1024;
             }
-            else if (fbLen%1024>0) 
+            else if (fbLen % 1024 > 0) 
             {
-                size_t remainder = fbLen%1024;
+                size_t remainder = fbLen % 1024;
                 client.write(fbBuf, remainder);
                 // Serial.write(fbBuf, remainder);
             }
@@ -115,17 +95,16 @@ static bool ezdata_image_poster_mac_ver(String serverName, int serverPort, Strin
         // Serial.print(tail);
 
 
-        // Serial.println("http done");
-
+        // Release buffe 
         esp_camera_fb_return(fb);
         
+
+        // Wait result 
         int timoutTimer = 10000;
         long startTimer = millis();
         boolean state = false;
-        
         while ((startTimer + timoutTimer) > millis()) 
         {
-            // Serial.print(".");
             delay(100);      
             while (client.available()) 
             {
@@ -134,7 +113,7 @@ static bool ezdata_image_poster_mac_ver(String serverName, int serverPort, Strin
                 {
                     if (getAll.length()==0) 
                     { 
-                        state=true; 
+                        state = true; 
                     }
                     getAll = "";
                 }
@@ -142,24 +121,24 @@ static bool ezdata_image_poster_mac_ver(String serverName, int serverPort, Strin
                 { 
                     getAll += String(c); 
                 }
-                if (state==true) 
+                if (state == true) 
                 { 
                     getBody += String(c); 
                 }
                 startTimer = millis();
             }
-            if (getBody.length()>0) 
+            if (getBody.length() > 0) 
             { 
                 break; 
             }
         }
-        // Serial.println();
 
+        // Stop client 
         client.clearWriteError();
         client.stop();
 
-        Serial.println("get body:");
-        Serial.println(getBody);
+        // Log result 
+        Serial.printf("get body: %s\n", getBody.c_str());
         delay(100);
         printf("%s\n", getBody.c_str());
         ret = true;

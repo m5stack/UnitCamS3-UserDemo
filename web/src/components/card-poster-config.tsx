@@ -38,8 +38,8 @@ export default function CardPosterConfig() {
     wifiSsid: "",
     wifiPass: "",
     nickname: "",
-    postInterval: "30",
-    timeZone: "UTC+0",
+    postInterval: "5",
+    timeZone: "GMT+0",
   });
 
   const [widgetStates, setWidgetStates] = useState({
@@ -309,7 +309,7 @@ export default function CardPosterConfig() {
           label="Time zone"
           className="max-w-xs"
           color="primary"
-          defaultSelectedKeys={["UTC+0"]}
+          defaultSelectedKeys={["GMT+0"]}
           onChange={(e) => {
             setUserConfig({ ...userConfig, timeZone: e.target.value });
           }}

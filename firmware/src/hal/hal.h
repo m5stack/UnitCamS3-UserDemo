@@ -43,6 +43,7 @@ namespace HAL
             String start_poster = "no";
             String wait_ap_first = "no";
             String nickname = "UnitCamS3";
+            String time_zone = "GMT+0";
             int post_interval = 5;
         };
 

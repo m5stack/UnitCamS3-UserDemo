@@ -140,35 +140,38 @@ void resetConfig(AsyncWebServerRequest* request)
 void setConfig(AsyncWebServerRequest* request, JsonVariant& json)
 {
     HAL::hal::Config_t config;
+
+    // Copy configs 
     config.wifi_ssid = json["wifiSsid"].as<String>();
     config.wifi_password = json["wifiPass"].as<String>();
     config.start_poster = json["startPoster"].as<String>();
     config.post_interval = json["postInterval"];
-
     config.nickname = json["nickname"].as<String>();
+    config.time_zone = json["timeZone"].as<String>();
+
+    // Check nickname 
     if (config.nickname == "" || config.nickname == "null")
         config.nickname = "UnitCamS3";
 
-    // spdlog::info("get config:\n{}\n{}\n{}", config.wifi_ssid.c_str(), config.wifi_password.c_str(), config.post_interval);
-
-    if (config.wifi_ssid == "" || config.wifi_password == "" || config.start_poster == "" || config.post_interval == 0)
+    // Check bad configs 
+    if (config.wifi_ssid == "" || config.wifi_password == "" || config.start_poster == "" || config.post_interval == 0 || config.time_zone == "")
+    {
+        request->send(500, "application/json", "{\"msg\":\"bad config\"}");
+        return;
+    }
+    if (config.wifi_ssid == "null" || config.wifi_password == "null" || config.start_poster == "null" || config.time_zone == "null")
     {
         request->send(500, "application/json", "{\"msg\":\"bad config\"}");
         return;
     }
 
-    if (config.wifi_ssid == "null" || config.wifi_password == "null" || config.start_poster == "null")
-    {
-        request->send(500, "application/json", "{\"msg\":\"bad config\"}");
-        return;
-    }
-
+    // Store 
     HAL::hal::GetHal()->setConfig(config);
     request->send(200, "application/json", "{\"msg\":\"ok\"}");
 }
 
 
-std::array<std::string, 20> _wifi_list_buffer;
+static std::array<std::string, 20> _wifi_list_buffer;
 
 void getWifiList(AsyncWebServerRequest* request)
 {

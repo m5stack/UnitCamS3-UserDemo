@@ -13,13 +13,7 @@
 #include "api_poster.h"
 #include "../../hal/hal.h"
 #include <LittleFS.h>
-// #include "ezdata_image_poster.hpp"
-#include "ezdata_image_poster_mac_ver.hpp"
-
-
-// Poster State -------------------------------------
-static SemaphoreHandle_t _semaphore_posting = NULL;
-// Poster State -------------------------------------
+#include "ezdata_image_poster.hpp"
 
 
 // Led State -------------------------------------
@@ -117,43 +111,34 @@ static void _task_image_poster(void* param)
 
                 // Start posting 
                 spdlog::info("start posting..");
-                xSemaphoreTake(_semaphore_posting, portMAX_DELAY);
-
-
-                if (!ezdata_image_poster_mac_ver("ezdata2.m5stack.com", 80, server_path, HAL::hal::GetHal()->getConfig().nickname))
+                if (!ezdata_image_poster(
+                    "ezdata2.m5stack.com", 
+                    80, 
+                    server_path, 
+                    HAL::hal::GetHal()->getConfig().nickname,
+                    HAL::hal::GetHal()->getConfig().time_zone
+                ))
                 {
+                    // If failed 
                     spdlog::error("post failed, try reboot..");
+                    // Pass AP waiting 
                     auto cfg = HAL::hal::GetHal()->getConfig();
                     cfg.wait_ap_first = false;
                     HAL::hal::GetHal()->setConfig(cfg);
+                    // Go 
                     delay(1000);
                     esp_restart();
                 }
-
-
-                // // Test 
-                // if (!ezdata_image_poster_mac_ver("ezdata2.m5stack.com", 80, server_path, _post_tester.getPostCount()))
-                // {
-                //     spdlog::error("post failed, try reboot..");
-                //     auto cfg = HAL::hal::GetHal()->getConfig();
-                //     cfg.wait_ap_first = false;
-                //     HAL::hal::GetHal()->setConfig(cfg);
-                //     delay(1000);
-                //     esp_restart();
-                // }
-                // // _post_tester.getPostCount();
-
-
-                xSemaphoreGive(_semaphore_posting);
+                spdlog::info("done, wait next..");
 
                 // Update led state 
                 _set_led_state(led_state_waiting);
 
                 // Reset count down
                 post_count_down = HAL::hal::GetHal()->getConfig().post_interval;
-                // post_count_down = -1;
             }
 
+            // Count down 
             post_count_down--;
             if (post_count_down <= 0)
                 start_post = true;
@@ -236,21 +221,6 @@ static void _task_led(void* param)
 }
 
 
-void start_poster_task()
-{
-    /* Create a mutex type semaphore. */
-    _semaphore_posting = xSemaphoreCreateMutex();
-    _semaphore_led_state = xSemaphoreCreateMutex();
-
-
-    // Create image poster task
-    xTaskCreate(_task_image_poster, "poster", 4000, NULL, 5, NULL);
-    // Create led task 
-    xTaskCreate(_task_led, "led", 2000, NULL, 4, NULL);
-
-
-    spdlog::info("mac: {}", WiFi.macAddress().c_str());
-}
 
 
 static void _task_start_poster(void* param)
@@ -279,4 +249,15 @@ void startPoster(AsyncWebServerRequest* request)
 void load_poster_apis(AsyncWebServer& server)
 {
     server.on("/api/v1/start_poster", HTTP_GET, startPoster);
+}
+
+void start_poster_task()
+{
+    /* Create a mutex type semaphore. */
+    _semaphore_led_state = xSemaphoreCreateMutex();
+
+    // Create image poster task
+    xTaskCreate(_task_image_poster, "poster", 4000, NULL, 5, NULL);
+    // Create led task 
+    xTaskCreate(_task_led, "led", 2000, NULL, 4, NULL);
 }
