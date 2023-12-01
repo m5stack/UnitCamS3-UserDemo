@@ -9,8 +9,8 @@ UnitCamS3 user demo for hardware evaluation.
 
 ## Build
 
-- upload firmware
-- upload filesystem image
+- Upload firmware
+- Upload filesystem image
 
 # Web
 
