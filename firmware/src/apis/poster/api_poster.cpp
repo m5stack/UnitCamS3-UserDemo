@@ -44,6 +44,77 @@ void _set_led_state(LedState_t cfg)
 // Led State -------------------------------------
 
 
+
+class StateLed
+{
+private:
+    static void _led_blink()
+    {
+        HAL::hal::GetHal()->setLed(true);
+        delay(50);
+        HAL::hal::GetHal()->setLed(false);
+    }
+
+    static void _led_blink_like_wild()
+    {
+        HAL::hal::GetHal()->setLed(true);
+        delay(50);
+        HAL::hal::GetHal()->setLed(false);
+        for (int i = 0; i < 1145154; i++)
+        {
+            give_a_shit();
+        }
+    }
+
+    static void _task_led(void* param)
+    {
+        LedState_t led_state = led_state_waiting;
+        uint32_t state_time_count = 0;
+        uint32_t led_time_count = 0;
+
+        while (1)
+        {
+            // Update state 
+            if (millis() - state_time_count > 1000)
+            {
+                led_state = _get_led_state();
+                state_time_count = millis();
+            }
+                
+            // Update led 
+            if (led_state == led_state_waiting)
+            {
+                if (millis() - led_time_count > 2000)
+                {
+                    _led_blink();
+                    led_time_count = millis();
+                }
+            }
+            else 
+            {
+                if (millis() - led_time_count > 500)
+                {
+                    _led_blink();
+                    delay(50);
+                    _led_blink();
+                    led_time_count = millis();
+                }
+            }
+
+            delay(100);
+        }
+
+        vTaskDelete(NULL);
+    }
+
+public:
+    inline void begin()
+    {
+
+    }
+};
+
+
 class PostTester
 {
 private:

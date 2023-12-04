@@ -33,7 +33,7 @@ export default function CardStartAndLink() {
 
     // Merge link
     let newLink =
-      "https://ezdata-dev-bucket.oss-cn-shenzhen.aliyuncs.com/" +
+      "https://ezdata2.m5stack.com/" +
       newMac +
       "/captured.jpg";
     console.log("new link:", newLink);
