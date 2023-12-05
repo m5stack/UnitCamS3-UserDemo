@@ -51,6 +51,7 @@ namespace HAL
         struct Data_t
         {
             bool is_wifi_config_vaild = false;
+            bool is_sd_card_valid = false;
             Config_t config;
         };
         Data_t _data;
@@ -83,6 +84,10 @@ namespace HAL
         Config_t getConfig();
         Config_t getDefaultConfig();
         void printConfig();
+        
+        // For poster mode usage 
+        bool sdCardInit();
+        inline bool isSdCardValid() { return _data.is_sd_card_valid; }
 
 
     private:
