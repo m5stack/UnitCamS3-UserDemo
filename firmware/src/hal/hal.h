@@ -50,9 +50,10 @@ namespace HAL
     private:
         struct Data_t
         {
-            bool is_wifi_config_vaild = false;
-            bool is_sd_card_valid = false;
             Config_t config;
+            bool is_wifi_config_vaild = false;
+
+            bool is_sd_card_valid = false;
         };
         Data_t _data;
         
@@ -88,6 +89,7 @@ namespace HAL
         // For poster mode usage 
         bool sdCardInit();
         inline bool isSdCardValid() { return _data.is_sd_card_valid; }
+        void saveImage(uint8_t* img, size_t size);
 
 
     private:
