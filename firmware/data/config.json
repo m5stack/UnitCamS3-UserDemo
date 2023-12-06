@@ -5,6 +5,7 @@
     "waitApFirst": "no",
     "nickname": "UnitCamS3",
     "postInterval": 5,
-    "timeZone": "GMT+0"
+    "timeZone": "GMT+0",
+    "startShooter": "no"
   }
   

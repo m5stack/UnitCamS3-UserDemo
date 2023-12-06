@@ -22,6 +22,8 @@ void setup()
     // Start server 
     if (HAL::hal::GetHal()->getConfig().start_poster == "yes")
         UserDemoServers::start_poster_server();
+    else if (HAL::hal::GetHal()->getConfig().start_shooter == "yes")
+        UserDemoServers::start_shooter_server();
     else 
         UserDemoServers::start_ap_server();
 }

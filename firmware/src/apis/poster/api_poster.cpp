@@ -14,34 +14,7 @@
 #include "../../hal/hal.h"
 #include <LittleFS.h>
 #include "ezdata_image_poster.hpp"
-
-
-// Led State -------------------------------------
-static SemaphoreHandle_t _semaphore_led_state = NULL;
-
-enum LedState_t
-{
-    led_state_waiting = 0,
-    led_state_posting,
-};
-static LedState_t _led_state = led_state_waiting;
-
-LedState_t _get_led_state()
-{
-    LedState_t ret = led_state_waiting;
-    xSemaphoreTake(_semaphore_led_state, portMAX_DELAY);
-    ret = _led_state;
-    xSemaphoreGive(_semaphore_led_state);
-    return ret;
-}
-
-void _set_led_state(LedState_t cfg)
-{
-    xSemaphoreTake(_semaphore_led_state, portMAX_DELAY);
-    _led_state = cfg;
-    xSemaphoreGive(_semaphore_led_state);
-}
-// Led State -------------------------------------
+#include "../utils/led_status/status_led.h"
 
 
 class PostTester
@@ -119,7 +92,7 @@ static void _task_image_poster(void* param)
                 start_post = false;
 
                 // Update led state 
-                _set_led_state(led_state_posting);
+                StatusLed::setState(led_state_posting);
 
                 // Start posting 
                 spdlog::info("start posting..");
@@ -145,7 +118,7 @@ static void _task_image_poster(void* param)
                 spdlog::info("done, wait next..");
 
                 // Update led state 
-                _set_led_state(led_state_waiting);
+                StatusLed::setState(led_state_waiting);
 
                 // Reset count down
                 post_count_down = HAL::hal::GetHal()->getConfig().post_interval;
@@ -184,57 +157,6 @@ static void _task_image_poster(void* param)
     vTaskDelete(NULL);
 }
 
-static void _led_blink()
-{
-    HAL::hal::GetHal()->setLed(true);
-    delay(50);
-    HAL::hal::GetHal()->setLed(false);
-}
-
-
-static void _task_led(void* param)
-{
-    LedState_t led_state = led_state_waiting;
-    uint32_t state_time_count = 0;
-    uint32_t led_time_count = 0;
-
-    while (1)
-    {
-        // Update state 
-        if (millis() - state_time_count > 1000)
-        {
-            led_state = _get_led_state();
-            state_time_count = millis();
-        }
-            
-        // Update led 
-        if (led_state == led_state_waiting)
-        {
-            if (millis() - led_time_count > 2000)
-            {
-                _led_blink();
-                led_time_count = millis();
-            }
-        }
-        else 
-        {
-            if (millis() - led_time_count > 500)
-            {
-                _led_blink();
-                delay(50);
-                _led_blink();
-                led_time_count = millis();
-            }
-        }
-
-        delay(100);
-    }
-
-    vTaskDelete(NULL);
-}
-
-
-
 
 static void _task_start_poster(void* param)
 {
@@ -266,11 +188,9 @@ void load_poster_apis(AsyncWebServer& server)
 
 void start_poster_task()
 {
-    /* Create a mutex type semaphore. */
-    _semaphore_led_state = xSemaphoreCreateMutex();
+    // Start status led 
+    StatusLed::start();
 
     // Create image poster task
     xTaskCreate(_task_image_poster, "poster", 4000, NULL, 5, NULL);
-    // Create led task 
-    xTaskCreate(_task_led, "led", 2000, NULL, 4, NULL);
 }
