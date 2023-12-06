@@ -15,6 +15,13 @@
 #include <esp_wifi.h>
 
 
+struct PostCallback_t
+{
+public:
+    virtual void imageCaptured(camera_fb_t* frameBuffer) {}
+};
+
+
 static String _http_part_1 = "------unitcams3poster\r\nContent-Disposition: form-data; name=\"dataType\"\r\n\r\nfile\r\n------unitcams3poster\r\nContent-Disposition: form-data; name=\"watermarkText\"\r\n\r\n";
 static String _http_part_2 = "\r\n------unitcams3poster\r\nContent-Disposition: form-data; name=\"timeZoneId\"\r\n\r\n";
 static String _http_part_3 = "\r\n------unitcams3poster\r\nContent-Disposition: form-data; name=\"name\"\r\n\r\ncaptured\r\n------unitcams3poster\r\nContent-Disposition: form-data; name=\"permissions\"\r\n\r\n1\r\n------unitcams3poster\r\nContent-Disposition: form-data; name=\"value\"\r\n\r\ncaptured.jpg\r\n------unitcams3poster\r\nContent-Disposition: form-data; name=\"file\"; filename=\"captured.jpg\"\r\nContent-Type: image/jpeg\r\n\r\n";
@@ -23,7 +30,7 @@ static String _http_tail = "\r\n------unitcams3poster--\r\n";
 
 static WiFiClient client;
 
-static bool ezdata_image_poster(String serverName, int serverPort, String serverPath, String nickname, String timeZone) 
+static bool ezdata_image_poster(String serverName, int serverPort, String serverPath, String nickname, String timeZone, PostCallback_t* postCallback = nullptr) 
 {
     bool ret = false;
     String getAll;
@@ -39,6 +46,10 @@ static bool ezdata_image_poster(String serverName, int serverPort, String server
         // return "啊?";
         return false;
     }
+
+    // Callback 
+    if (postCallback != nullptr)
+        postCallback->imageCaptured(fb);
     
     // Connect server 
     // Serial.println("Connecting to server: " + serverName);
