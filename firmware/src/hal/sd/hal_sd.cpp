@@ -47,7 +47,7 @@ public:
         _file_name_buffer += _image_num;
         _file_name_buffer += extension;
 
-        spdlog::info("get save path: {}", _file_name_buffer.c_str());
+        // spdlog::info("get save path: {}", _file_name_buffer.c_str());
         return _file_name_buffer;
     }
 };
@@ -134,7 +134,7 @@ bool hal::sdCardInit()
 
 void hal::saveImage(uint8_t* img, size_t size)
 {   
-    spdlog::info("try save image at {} ..", _img_save_path.getSavePath());
+    spdlog::info("try save image at {} ..", _img_save_path.getSavePath().c_str());
 
     // Save 
     File file = SD.open(_img_save_path.getSavePath(), "w", true);

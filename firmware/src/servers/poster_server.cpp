@@ -149,6 +149,9 @@ void UserDemoServers::start_poster_server()
     }
     
 
+    // Init sd card 
+    HAL::hal::GetHal()->sdCardInit();
+
     // Start poster 
     start_poster_task();
 }

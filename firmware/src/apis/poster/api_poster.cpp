@@ -67,6 +67,16 @@ public:
 static PostTester _post_tester;
 
 
+struct PostCallback_SaveSdCard_t : public PostCallback_t
+{
+    void imageCaptured(camera_fb_t* frameBuffer) override
+    {
+        if (HAL::hal::GetHal()->isSdCardValid())
+            HAL::hal::GetHal()->saveImage(frameBuffer->buf, frameBuffer->len);
+    }
+};
+
+
 static void _task_image_poster(void* param)
 {
     gpio_reset_pin(GPIO_NUM_0);
@@ -94,6 +104,8 @@ static void _task_image_poster(void* param)
         server_path += "/uploadMacFile";
     }
 
+    // Callback 
+    auto post_callback = new PostCallback_SaveSdCard_t;
     
     while (1)
     {
@@ -116,7 +128,8 @@ static void _task_image_poster(void* param)
                     80, 
                     server_path, 
                     HAL::hal::GetHal()->getConfig().nickname,
-                    HAL::hal::GetHal()->getConfig().time_zone
+                    HAL::hal::GetHal()->getConfig().time_zone,
+                    post_callback
                 ))
                 {
                     // If failed 
