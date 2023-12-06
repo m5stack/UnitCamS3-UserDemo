@@ -1,9 +1,9 @@
 /**
- * @file ap_server.cpp
+ * @file server_ap.cpp
  * @author Forairaaaaa
  * @brief 
  * @version 0.1
- * @date 2023-11-03
+ * @date 2023-12-06
  * 
  * @copyright Copyright (c) 2023
  * 
@@ -27,6 +27,7 @@
 #include "apis/system/api_system.h"
 #include "apis/mic/api_mic.h"
 #include "apis/poster/api_poster.h"
+#include "apis/shooter/api_shooter.h"
 
 
 static AsyncWebServer* _server = nullptr;
@@ -61,6 +62,7 @@ void UserDemoServers::start_ap_server()
     load_system_apis(*_server);
     load_mic_apis(*_server);
     load_poster_apis(*_server);
+    load_shooter_apis(*_server);
 
     // Set file system support 
     _server->serveStatic("/", LittleFS, "/").setDefaultFile("index.html");

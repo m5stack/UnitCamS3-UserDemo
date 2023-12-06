@@ -15,4 +15,5 @@ namespace UserDemoServers
     void start_ap_server();
     void stop_ap_server();
     void start_poster_server();
+    void start_shooter_server();
 }

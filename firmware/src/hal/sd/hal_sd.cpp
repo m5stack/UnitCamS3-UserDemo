@@ -132,15 +132,25 @@ bool hal::sdCardInit()
 }
 
 
-void hal::saveImage(uint8_t* img, size_t size)
+bool hal::saveImage(uint8_t* img, size_t size)
 {   
     spdlog::info("try save image at {} ..", _img_save_path.getSavePath().c_str());
 
     // Save 
     File file = SD.open(_img_save_path.getSavePath(), "w", true);
-    file.write(img, size);
-    file.close();
+    if (file)
+    {
+        file.write(img, size);
+        file.close();
+    }
+    else
+    {
+        spdlog::error("open {} failed!", _img_save_path.getSavePath());
+        return false;
+    }
+    
 
     spdlog::info("done");
     _img_save_path.nextImage();
+    return true;
 }

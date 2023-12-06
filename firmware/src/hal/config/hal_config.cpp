@@ -41,6 +41,7 @@ void hal::setConfig(hal::Config_t& cfg)
     doc["nickname"] = cfg.nickname;
     doc["postInterval"] = cfg.post_interval;
     doc["timeZone"] = cfg.time_zone;
+    doc["startShooter"] = cfg.start_shooter;
 
     serializeJson(doc, file);
 
@@ -70,6 +71,7 @@ hal::Config_t hal::getConfig()
     _data.config.nickname = doc["nickname"].as<String>();
     _data.config.post_interval = doc["postInterval"];
     _data.config.time_zone = doc["timeZone"].as<String>();
+    _data.config.start_shooter = doc["startShooter"].as<String>();
 
     file.close();
 
@@ -118,13 +120,14 @@ void hal::_config_init()
 void hal::printConfig()
 {
     spdlog::info("config:");
-    printf("wifi ssid: %s\nwifi password: %s\nstart poster: %s\nwait ap first: %s\nnickname: %s\npost interval: %d\ntime zone: %s\n", 
+    printf("wifi ssid: %s\nwifi password: %s\nstart poster: %s\nwait ap first: %s\nnickname: %s\npost interval: %d\ntime zone: %s\nstart interval shooter: %s\n", 
         _data.config.wifi_ssid.c_str(), 
         _data.config.wifi_password.c_str(),
         _data.config.start_poster.c_str(),
         _data.config.wait_ap_first.c_str(),
         _data.config.nickname.c_str(),
         _data.config.post_interval,
-        _data.config.time_zone.c_str()
+        _data.config.time_zone.c_str(),
+        _data.config.start_shooter.c_str()
     );
 }

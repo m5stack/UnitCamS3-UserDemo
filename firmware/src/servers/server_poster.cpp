@@ -1,9 +1,9 @@
 /**
- * @file poster_server.cpp
+ * @file server_poster.cpp
  * @author Forairaaaaa
  * @brief 
  * @version 0.1
- * @date 2023-11-20
+ * @date 2023-12-06
  * 
  * @copyright Copyright (c) 2023
  * 
@@ -141,6 +141,7 @@ void UserDemoServers::start_poster_server()
     spdlog::info("connect ok, ip: {}", WiFi.localIP().toString().c_str());
     
 
+    // Mark to wait at next time 
     if (config.wait_ap_first != "yes")
     {
         spdlog::info("start 10s ap waiting from next reboot");

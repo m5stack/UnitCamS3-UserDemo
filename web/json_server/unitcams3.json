@@ -48,5 +48,8 @@
   },
   "start_poster": {
     "msg": "ok"
+  },
+  "start_shooter": {
+    "msg": "ok"
   }
 }

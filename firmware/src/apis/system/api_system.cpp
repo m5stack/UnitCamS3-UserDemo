@@ -154,7 +154,7 @@ void setConfig(AsyncWebServerRequest* request, JsonVariant& json)
         config.nickname = "UnitCamS3";
 
     // Check bad configs 
-    if (config.wifi_ssid == "" || config.wifi_password == "" || config.start_poster == "" || config.post_interval == 0 || config.time_zone == "")
+    if (config.start_poster == "" || config.post_interval == 0 || config.time_zone == "")
     {
         request->send(500, "application/json", "{\"msg\":\"bad config\"}");
         return;
