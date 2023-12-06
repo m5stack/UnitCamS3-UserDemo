@@ -4,7 +4,7 @@ import { Card, Link } from "@nextui-org/react";
 import { useState, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 
-export default function CardStartAndLink() {
+export default function CardPosterStartAndLink() {
   const [imageLink, setImageLink] = useState("");
   //   const [imageLink, setImageLink] = useState(
   //     "https://ezdata-dev-bucket.oss-cn-shenzhen.aliyuncs.com/asdasdasdasdasd/asdasdasdasd/asdasdasda"

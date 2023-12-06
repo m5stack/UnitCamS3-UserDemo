@@ -120,7 +120,7 @@ void hal::_config_init()
 void hal::printConfig()
 {
     spdlog::info("config:");
-    printf("wifi ssid: %s\nwifi password: %s\nstart poster: %s\nwait ap first: %s\nnickname: %s\npost interval: %d\ntime zone: %s\nstart interval shooter: %d\n", 
+    printf("wifi ssid: %s\nwifi password: %s\nstart poster: %s\nwait ap first: %s\nnickname: %s\npost interval: %d\ntime zone: %s\nstart interval shooter: %s\n", 
         _data.config.wifi_ssid.c_str(), 
         _data.config.wifi_password.c_str(),
         _data.config.start_poster.c_str(),

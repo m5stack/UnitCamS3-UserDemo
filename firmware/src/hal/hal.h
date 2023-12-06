@@ -89,7 +89,7 @@ namespace HAL
         // For poster mode usage 
         bool sdCardInit();
         inline bool isSdCardValid() { return _data.is_sd_card_valid; }
-        void saveImage(uint8_t* img, size_t size);
+        bool saveImage(uint8_t* img, size_t size);
 
 
     private:

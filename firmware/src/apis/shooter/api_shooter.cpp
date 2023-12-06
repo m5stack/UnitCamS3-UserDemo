@@ -61,9 +61,23 @@ static void _task_image_shooter(void* param)
                 
                 // Save 
                 if (HAL::hal::GetHal()->isSdCardValid())
-                    HAL::hal::GetHal()->saveImage(fb->buf, fb->len);
+                {
+                    if (!HAL::hal::GetHal()->saveImage(fb->buf, fb->len))
+                    {
+                        // If failed 
+                        spdlog::error("save image failed, try reboot..");
+                        // Pass AP waiting 
+                        auto cfg = HAL::hal::GetHal()->getConfig();
+                        cfg.wait_ap_first = false;
+                        HAL::hal::GetHal()->setConfig(cfg);
+                        // Go 
+                        delay(1000);
+                        esp_restart();
+                    }
+                }
                 else
                     spdlog::error("sd card not valid?");
+                esp_camera_fb_return(fb);
 
 
                 spdlog::info("done, wait next..");

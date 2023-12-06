@@ -11,7 +11,7 @@ import {
   Divider,
 } from "@nextui-org/react";
 
-export default function CardNotice() {
+export default function CardPosterNotice() {
   return (
     <Card className="grow">
       <div className="mx-10 mt-5 mb-5 flex gap-x-5 justify-end items-center">
@@ -21,7 +21,7 @@ export default function CardNotice() {
       </div>
       <div className="mx-5 mt-2">
         <p className="text-center">
-          UnitCamS3 will try to connect the wifi and post an image.
+          UnitCamS3 will try to connect the wifi and start posting images.
         </p>
 
         <Divider className="mt-5 mb-10"></Divider>

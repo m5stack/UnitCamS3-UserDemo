@@ -1,8 +1,8 @@
 // "use client";
 
 import TitleBar from "../components/title-bar";
-import CardStartAndLink from "../components/card-start-and-link";
-import CardNotice from "../components/card-notice";
+import CardPosterStartAndLink from "../components/poster/card-poster-start-and-link";
+import CardPosterNotice from "../components/poster/card-poster-notice";
 
 export default function PagePosterStart() {
   return (
@@ -10,8 +10,8 @@ export default function PagePosterStart() {
       <TitleBar></TitleBar>
 
       <div className="flex flex-col mt-24 mb-8 px-2 gap-8 sm:w-3/4 sm:mx-auto">
-        <CardStartAndLink></CardStartAndLink>
-        <CardNotice></CardNotice>
+        <CardPosterStartAndLink></CardPosterStartAndLink>
+        <CardPosterNotice></CardPosterNotice>
       </div>
     </div>
   );
