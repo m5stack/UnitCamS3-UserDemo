@@ -13,13 +13,14 @@
 #include "../hal.h"
 #include <LittleFS.h>
 #include <ArduinoJson.h>
+#include <SD.h>
+#include <FS.h>
 
 
 using namespace HAL;
 
 
 static const char* _config_file_path = "/config.json";
-
 
 void hal::setConfig(hal::Config_t& cfg)
 {
@@ -113,21 +114,74 @@ void hal::_config_init()
 
     // Sync config
     getConfig();
+
+    // Hijack config if valid 
+    if (_check_sd_card_config_hijack())
+    {
+        // Over write internal config 
+        setConfig(_data.config);
+    }
+
     printConfig();
+}
+
+
+bool hal::_check_sd_card_config_hijack()
+{
+    spdlog::info("try load config from sd..");
+
+    // Check sd card 
+    sdCardInit(true);
+    if (!_data.is_sd_card_valid)
+        return false;
+
+    // Check config exist 
+    if (!SD.exists(_config_file_path))
+    {
+        spdlog::info("{} not exist", _config_file_path);
+        return false;
+    }
+
+    // Try open 
+    File file = SD.open(_config_file_path, "r");
+    if (!file)
+    {
+        spdlog::error("open {} failed", _config_file_path);
+        return false;
+    }
+
+    // Parse json 
+    DynamicJsonDocument doc(1024);
+    deserializeJson(doc, file);
+
+    // Copy 
+    spdlog::info("copy config from sd..");
+    if (!doc["wifiSsid"].isNull())
+        _data.config.wifi_ssid = doc["wifiSsid"].as<String>();
+    if (!doc["wifiPass"].isNull())
+        _data.config.wifi_password = doc["wifiPass"].as<String>();
+    if (!doc["nickname"].isNull())
+        _data.config.nickname = doc["nickname"].as<String>();
+    if (!doc["postInterval"].isNull())
+        _data.config.post_interval = doc["postInterval"];
+    if (!doc["timeZone"].isNull())
+        _data.config.time_zone = doc["timeZone"].as<String>();
+    
+    file.close();
+    sdCardDeinit();
+    return true;
 }
 
 
 void hal::printConfig()
 {
     spdlog::info("config:");
-    printf("wifi ssid: %s\nwifi password: %s\nstart poster: %s\nwait ap first: %s\nnickname: %s\npost interval: %d\ntime zone: %s\nstart interval shooter: %s\n", 
-        _data.config.wifi_ssid.c_str(), 
-        _data.config.wifi_password.c_str(),
-        _data.config.start_poster.c_str(),
-        _data.config.wait_ap_first.c_str(),
-        _data.config.nickname.c_str(),
-        _data.config.post_interval,
-        _data.config.time_zone.c_str(),
-        _data.config.start_shooter.c_str()
-    );
+    printf("wifi ssid: %s\n", _data.config.wifi_ssid.c_str());
+    printf("wifi pass: %s\n", _data.config.wifi_password.c_str());
+    printf("nickname: %s\n", _data.config.nickname.c_str());
+    printf("post interval: %d\n", _data.config.post_interval);
+    printf("time zone: %s\n", _data.config.time_zone.c_str());
+    printf("wait ap first: %s\n", _data.config.wait_ap_first.c_str());
+    printf("start poster: %s\n", _data.config.start_poster.c_str());
+    printf("start interval shooter: %s\n", _data.config.start_shooter.c_str());
 }
