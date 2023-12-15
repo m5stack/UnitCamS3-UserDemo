@@ -54,7 +54,9 @@ public:
 static ImageSavePath_t _img_save_path;
 
 
-bool hal::sdCardInit()
+static SPIClass* _sd_spi = nullptr;
+
+bool hal::sdCardInit(bool passImagePath)
 {
     spdlog::info("try init sd card..");
     _data.is_sd_card_valid = false;
@@ -63,8 +65,8 @@ bool hal::sdCardInit()
     spdlog::info("cs:{} miso:{} mosi:{} clk:{}", sd_pins.cs, sd_pins.miso, sd_pins.mosi, sd_pins.clk);
 
     /// Init spi 
-    SPIClass* sd_spi = new SPIClass(HSPI);
-    sd_spi->begin(
+    SPIClass* _sd_spi = new SPIClass(HSPI);
+    _sd_spi->begin(
         sd_pins.clk,
         sd_pins.miso,
         sd_pins.mosi,
@@ -82,15 +84,24 @@ bool hal::sdCardInit()
 
 
     // Init sd 
-    bool ret = SD.begin(sd_pins.cs, *sd_spi, 10000000);
+    bool ret = SD.begin(sd_pins.cs, *_sd_spi, 10000000);
     if (!ret)
     {
         spdlog::error("sd card init failed");
+        delete _sd_spi;
         return false;
     }
 
     spdlog::info("sd card init ok");
     spdlog::info("size: {}G", SD.cardSize() / 1073741824);
+
+
+    if (passImagePath)
+    {
+        spdlog::info("pass image path init, done");
+        _data.is_sd_card_valid = true;
+        return true;
+    }
     
 
     // Check path 
@@ -100,6 +111,8 @@ bool hal::sdCardInit()
         if (!SD.mkdir(_img_save_path.path))
         {
             spdlog::error("create failed!");
+            SD.end();
+            delete _sd_spi;
             return false;
         }
     }
@@ -129,6 +142,14 @@ bool hal::sdCardInit()
     spdlog::info("done");
     _data.is_sd_card_valid = true;
     return true;
+}
+
+
+void hal::sdCardDeinit()
+{
+    _data.is_sd_card_valid = false;
+    SD.end();
+    delete _sd_spi;
 }
 
 
