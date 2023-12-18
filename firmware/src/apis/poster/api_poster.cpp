@@ -115,7 +115,7 @@ static void _task_image_poster(void* param)
                     delay(1000);
                     esp_restart();
                 }
-                spdlog::info("done, wait next..");
+                spdlog::info("done, wait next in {}s..", HAL::hal::GetHal()->getConfig().post_interval);
 
                 // Update led state 
                 StatusLed::setState(led_state_waiting);

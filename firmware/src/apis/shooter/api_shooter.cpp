@@ -80,7 +80,7 @@ static void _task_image_shooter(void* param)
                 esp_camera_fb_return(fb);
 
 
-                spdlog::info("done, wait next..");
+                spdlog::info("done, wait next in {}s..", HAL::hal::GetHal()->getConfig().post_interval);
 
                 // Update led state 
                 StatusLed::setState(led_state_waiting);

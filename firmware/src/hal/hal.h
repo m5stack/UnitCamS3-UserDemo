@@ -30,7 +30,6 @@
 #define HAL_PIN_SD_MISO     40
 
 
-
 namespace HAL
 {
     class hal
@@ -59,6 +58,7 @@ namespace HAL
         
         void _cam_init();
         void _config_init();
+        bool _check_sd_card_config_hijack();
 
     public:
         void init();
@@ -87,7 +87,8 @@ namespace HAL
         void printConfig();
         
         // For poster mode usage 
-        bool sdCardInit();
+        bool sdCardInit(bool passImagePath = false);
+        void sdCardDeinit();
         inline bool isSdCardValid() { return _data.is_sd_card_valid; }
         bool saveImage(uint8_t* img, size_t size);
 
