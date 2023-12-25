@@ -118,11 +118,14 @@ void UserDemoServers::start_poster_server()
                 }
 
                 // Time out 
-                if (millis() - time_count > 60000UL)
+                if (millis() - time_count > 30000UL)
                 {
-                    spdlog::error("connect failed, return back to ap mode");
-                    config.start_poster = "no";
-                    HAL::hal::GetHal()->setConfig(config);
+                    // spdlog::error("connect failed, return back to ap mode");
+                    // config.start_poster = "no";
+                    // HAL::hal::GetHal()->setConfig(config);
+
+                    // Keep trying 
+                    spdlog::error("connect failed, reboot..");
                     
                     // Reboot 
                     delay(300);
