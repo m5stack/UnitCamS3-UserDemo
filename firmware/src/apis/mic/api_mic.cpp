@@ -56,7 +56,6 @@ struct __attribute__((packed)) wav_header_t
   uint32_t sub_chunk_size = maxfilesize - 44;
 };
 
-// http://gitlab.m5stack.com/Forairaaaaa/mic_recording_test/blob/master/src/MicRecordingTest/mic_recording_test.cpp
 static void _mic_recording_task(void* param)
 {
     xSemaphoreTake(_xSemaphore_is_recording, portMAX_DELAY);
