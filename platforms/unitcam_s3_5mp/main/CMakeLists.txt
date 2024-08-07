@@ -1,0 +1,37 @@
+file(GLOB_RECURSE APP_LAYER_SRCS
+    ../../../app/*.c
+    ../../../app/*.cpp
+)
+
+set(APP_LAYER_INCS
+    ../../../app
+)
+
+file(GLOB_RECURSE HAL_SRCS
+    ./hal_unitcam_s3_5mp/*.c
+    ./hal_unitcam_s3_5mp/*.cpp
+)
+
+idf_component_register(SRCS "app_main.cpp" ${APP_LAYER_SRCS} ${HAL_SRCS}
+                    INCLUDE_DIRS "." ${APP_LAYER_INCS})
+
+# 获取环境变量 FACTORY_TEST_WIFI_SSID 和 FACTORY_TEST_WIFI_PASSWORD
+if(DEFINED ENV{FACTORY_TEST_WIFI_SSID})
+    set(FACTORY_TEST_WIFI_SSID_VALUE "$ENV{FACTORY_TEST_WIFI_SSID}")
+    message(STATUS "Using FACTORY_TEST_WIFI_SSID from environment: ${FACTORY_TEST_WIFI_SSID_VALUE}")
+else()
+    set(FACTORY_TEST_WIFI_SSID_VALUE "114514")
+    message(WARNING "FACTORY_TEST_WIFI_SSID not set, using default: ${FACTORY_TEST_WIFI_SSID_VALUE}")
+endif()
+
+if(DEFINED ENV{FACTORY_TEST_WIFI_PASSWORD})
+    set(FACTORY_TEST_WIFI_PASSWORD_VALUE "$ENV{FACTORY_TEST_WIFI_PASSWORD}")
+    message(STATUS "Using FACTORY_TEST_WIFI_PASSWORD from environment: ${FACTORY_TEST_WIFI_PASSWORD_VALUE}")
+else()
+    set(FACTORY_TEST_WIFI_PASSWORD_VALUE "2333")
+    message(WARNING "FACTORY_TEST_WIFI_PASSWORD not set, using default: ${FACTORY_TEST_WIFI_PASSWORD_VALUE}")
+endif()
+
+# 将环境变量作为宏定义
+add_definitions(-DFACTORY_TEST_WIFI_SSID="${FACTORY_TEST_WIFI_SSID_VALUE}")
+add_definitions(-DFACTORY_TEST_WIFI_PASSWORD="${FACTORY_TEST_WIFI_PASSWORD_VALUE}")
