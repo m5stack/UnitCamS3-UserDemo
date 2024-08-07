@@ -1,40 +1,64 @@
-# UnitCamS3-UserDemo
-UnitCamS3 user demo for hardware evaluation.
-
-# Firmware
-
-## Tool Chains
-
-[PlatformIO](https://platformio.org/)
+# UnitCAMS3-5MP UserDemo
 
 ## Build
 
-- Upload firmware
-- Upload filesystem image
+### Fetch Dependencies
 
-# Web
-
-## Tool Chains
-
-[Vite](https://vitejs.dev/)
-
-## Dev
-
-Local Host
-
-```shell
-npm run dev
+```bash
+python ./fetch_repos.py
 ```
 
-JsonServer
+## Desktop Build
 
-```shell
-json-server --watch .\json_server\unitcams3.json
+#### Tool Chains
+
+```bash
+sudo apt install build-essential cmake
 ```
 
-## Build
+#### Build
 
-```shell
-npm run build
+```bash
+mkdir build && cd build
 ```
+```bash
+cmake .. && make -j8
+```
+#### Run
+
+```bash
+cd desktop && ./app_desktop_build
+```
+
+## IDF Build
+
+#### Tool Chains
+
+[ESP-IDF v5.1.4](https://docs.espressif.com/projects/esp-idf/en/v5.1.4/esp32s3/index.html)
+
+#### Build
+
+```bash
+cd platforms/vameter
+```
+
+```bash
+idf.py build
+```
+
+#### Flash
+
+```bash
+idf.py -p <YourPort> flash -b 1500000
+```
+
+##### Flash AssetPool
+
+```bash
+parttool.py --port <YourPort> write_partition --partition-name=assetpool --input "path/to/AssetPool.bin"
+```
+
+If you run desktop build before, you can found `AssetPool.bin` at 
+
+`../../build/desktop/AssetPool.bin`.
 
