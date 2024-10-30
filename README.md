@@ -1,6 +1,8 @@
 # UnitCamS3-UserDemo
 UnitCamS3 user demo for hardware evaluation.
 
+If you looking UnitCAM S3 5MP, please check this branch: [unitcams3-5mp](https://github.com/m5stack/UnitCamS3-UserDemo/tree/unitcams3-5mp)
+
 # Firmware
 
 ## Tool Chains
