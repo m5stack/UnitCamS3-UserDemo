@@ -39,7 +39,7 @@ cd desktop && ./app_desktop_build
 #### Build
 
 ```bash
-cd platforms/vameter
+cd platforms/unitcam_s3_5mp
 ```
 
 ```bash
